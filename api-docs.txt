@@ -1,0 +1,84 @@
+#API Documentation: ChemnitzAtlas
+
+Base URL: `http://localhost:4000/api`
+
+---
+
+## Auth Routes (`/auth`)
+
+### POST `/signup`
+Register a new user
+- **Body:** `{ email, password, name, location }`
+- **Returns:** `{ token }`
+
+### POST `/login`
+Authenticate user
+- **Body:** `{ email, password }`
+- **Returns:** `{ token }`
+
+### GET `/me`
+Get current authenticated user
+- **Headers:** `Authorization: Bearer <token>`
+- **Returns:** `{ _id, email, name, location, ... }`
+
+### PUT `/update`
+Update profile (name, location)
+- **Body:** `{ name?, location? }`
+- **Headers:** `Authorization: Bearer <token>`
+
+### PUT `/update-password`
+Update password
+- **Body:** `{ password }`
+- **Headers:** `Authorization: Bearer <token>`
+
+### DELETE `/`
+Soft delete user account
+- **Headers:** `Authorization: Bearer <token>`
+
+### POST `/:id/favorite`
+Toggle favorite for a place
+- **Params:** `id` = place ID
+- **Headers:** `Authorization: Bearer <token>`
+
+### GET `/favorites`
+Get all favorited places for user
+- **Headers:** `Authorization: Bearer <token>`
+
+---
+
+## Place Routes (`/places`)
+
+### GET `/`
+Get all places
+- **Returns:** `[ { _id, name, category, lat, lon, rating, reviews[] }, ... ]`
+
+### POST `/:id/reviews`
+Add or update a review for a place
+- **Params:** `id` = place ID
+- **Headers:** `Authorization: Bearer <token>`
+- **Body:** `{ rating, comment, username }`
+
+---
+
+## Location Routes (`/location`)
+
+### GET `/search?q=<query>`
+Search for address/location using Nominatim
+- **Returns:** list of matching addresses with lat/lon
+
+---
+
+## Authentication
+All protected routes require:
+```http
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+## Notes
+- Passwords are hashed with bcrypt.
+- JWT secret is stored in `.env`
+- Places are fetched from OpenStreetMap (Overpass API)
+- Favorites are embedded in the User model (ObjectIds of places)
+- Reviews are embedded in the Place model with average rating recalculated on update.

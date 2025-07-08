@@ -1,0 +1,23 @@
+#root,
+html,
+body {
+	background-color: #1c1d33;
+	height: 100%;
+	margin: 0;
+
+	/* max-width: 1280px;
+	margin: 0 auto;
+	padding: 2rem;
+	text-align: center; */
+}
+.leaflet-container {
+	height: 100% !important;
+	width: 100% !important;
+	z-index: 0 !important;
+	pointer-events: auto !important;
+	touch-action: auto !important;
+}
+
+input {
+	outline: none !important;
+}
