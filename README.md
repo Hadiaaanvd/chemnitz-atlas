@@ -55,3 +55,37 @@
 cd server
 npm install
 npm run dev
+
+
+```
+---
+
+## 🔌 API Overview
+
+See [`api-docs.md`](./api-docs.md) for full API documentation of:
+
+-   `/api/auth` – Login, Signup, Profile, Favorites
+-   `/api/places` – Fetch and Review places
+-   `/api/location/search?q=` – Address autocomplete
+
+---
+
+## MongoDB Collections
+
+-   `users`: User auth, favorites, soft deletion
+-   `places`: Categorized OSM-based cultural places with reviews and ratings
+
+---
+
+## Deployment
+
+You can deploy the frontend on **Vercel** and backend on **Render**, or use Docker/Node hosting. Ensure to update `.env` variables accordingly.
+
+---
+
+## Sample Accounts
+
+You can register a user using the signup flow, or manually insert via MongoDB.
+
+---
+
