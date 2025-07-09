@@ -1,7 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import api from "../utils/api"; // ✅ Use central API utility
 
 export default function LoginForm() {
 	const [email, setEmail] = useState("");
@@ -12,22 +12,22 @@ export default function LoginForm() {
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
+		setError("");
+
 		try {
-			const res = await axios.post(
-				"http://localhost:4000/api/auth/login",
-				{
-					email,
-					password,
-				}
-			);
+			const res = await api.post("/auth/login", { email, password });
 			login(res.data.token);
+			navigate("/"); // redirect after login
 		} catch (err) {
-			setError("Login failed");
+			console.error(err);
+			setError(
+				err.response?.data?.message || "Login failed. Please try again."
+			);
 		}
 	};
 
 	return (
-		<form onSubmit={handleLogin} className="space-y-4 ">
+		<form onSubmit={handleLogin} className="space-y-4">
 			<input
 				type="email"
 				placeholder="Email"

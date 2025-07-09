@@ -1,29 +1,17 @@
 import EditableField from "./EditableField";
 import { useAuth } from "../context/AuthContext";
 import { FaUserCircle } from "react-icons/fa";
-
-import axios from "axios";
+import api from "../utils/api";
 
 export default function EditProfile() {
 	const { user, updateUser, deleteAccount } = useAuth();
 
 	const handleFieldUpdate = async (key, value) => {
-		console.log(localStorage.getItem("token"));
 		try {
-			const res = await axios.put(
-				"http://localhost:4000/api/auth/update",
-				{ [key]: value },
-				{
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem(
-							"token"
-						)}`,
-					},
-				}
-			);
-			updateUser({ ...user, [key]: value });
+			const res = await api.put("/auth/update", { [key]: value });
+			updateUser({ ...user, [key]: value }); // ⬅️ update state
 		} catch (err) {
-			console.error(err);
+			console.error("Failed to update field:", err);
 		}
 	};
 

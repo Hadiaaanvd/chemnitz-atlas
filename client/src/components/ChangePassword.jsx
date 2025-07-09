@@ -1,7 +1,7 @@
 // src/components/ChangePasswordForm.jsx
 import { useState } from "react";
-import axios from "axios";
 import { FaUserCircle } from "react-icons/fa";
+import api from "../utils/api";
 
 export default function ChangePassword() {
 	const [password, setPassword] = useState("");
@@ -19,17 +19,7 @@ export default function ChangePassword() {
 		}
 
 		try {
-			await axios.put(
-				"http://localhost:4000/api/auth/update-password",
-				{ password },
-				{
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem(
-							"token"
-						)}`,
-					},
-				}
-			);
+			await api.put("/auth/update-password", { password }); // ✅ uses shared baseURL + token
 			setMessage("Password updated successfully.");
 			setPassword("");
 			setConfirmPassword("");
@@ -39,7 +29,6 @@ export default function ChangePassword() {
 			);
 		}
 	};
-
 	return (
 		<div className="w-lg h-full p-8 mx-auto rounded-xl shadow text-white space-y-6">
 			<div className="flex flex-col items-center mb-6">

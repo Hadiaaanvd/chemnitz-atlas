@@ -8,7 +8,13 @@ import {
 	FaHome,
 } from "react-icons/fa";
 
-export default function PlaceList({ places, onSelectPlace, isOpen, onClose }) {
+export default function PlaceList({
+	places,
+	onSelectPlace,
+	isOpen,
+	onClose,
+	loading,
+}) {
 	const categories = [...new Set(places.map((p) => p.category))];
 	const [expanded, setExpanded] = useState({});
 	const [openCategories, setOpenCategories] = useState({});
@@ -59,7 +65,14 @@ export default function PlaceList({ places, onSelectPlace, isOpen, onClose }) {
 				×
 			</button>
 
-			{places.length === 0 ? (
+			{loading ? (
+				<div className="bg-[#1e213a] text-center text-sm text-gray-300 rounded-xl py-10 px-4 shadow-md mt-10">
+					<p className="animate-pulse">
+						Please Wait! This might take a second.
+					</p>
+					<p className="text-xs mt-2">Loading places...</p>
+				</div>
+			) : places.length === 0 ? (
 				<div className="bg-[#1e213a] text-center text-sm text-gray-300 rounded-xl py-10 px-4 shadow-md mt-10">
 					<p>No places found.</p>
 					<p className="text-xs mt-2">

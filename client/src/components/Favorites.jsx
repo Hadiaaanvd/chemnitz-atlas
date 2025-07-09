@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import { FaHeart, FaRegHeart, FaStar, FaRegStar } from "react-icons/fa";
-import axios from "axios";
+import { FaHeart, FaStar, FaRegStar } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import api from "../utils/api"; // ✅ use central axios instance
 
 export default function Favorites({ onSelectPlace }) {
-	const { user, token, updateUser } = useAuth();
+	const { user, updateUser } = useAuth();
 	const [places, setPlaces] = useState([]);
 	const [updating, setUpdating] = useState(false);
 
 	useEffect(() => {
 		if (!user) return;
-		axios.get("http://localhost:4000/api/places").then((res) => {
-			setPlaces(res.data);
-		});
+
+		api.get("/places")
+			.then((res) => setPlaces(res.data))
+			.catch((err) => console.error("Failed to fetch places:", err));
 	}, [user]);
 
-	// Filter only user's favorite places
 	const favoritePlaces = places.filter((place) =>
 		user?.favorites?.includes(place._id)
 	);
@@ -33,18 +33,12 @@ export default function Favorites({ onSelectPlace }) {
 	);
 
 	const toggleFavorite = async (placeId) => {
-		if (!token || updating) return;
+		if (updating) return;
 		setUpdating(true);
+
 		try {
-			const res = await fetch(
-				`http://localhost:4000/api/auth/${placeId}/favorite`,
-				{
-					method: "POST",
-					headers: { Authorization: `Bearer ${token}` },
-				}
-			);
-			if (res.ok) {
-				// Optimistically update user favorites
+			const res = await api.post(`/auth/${placeId}/favorite`);
+			if (res.status === 200) {
 				const isFav = user.favorites.includes(placeId);
 				const newFavorites = isFav
 					? user.favorites.filter((id) => id !== placeId)
@@ -58,13 +52,13 @@ export default function Favorites({ onSelectPlace }) {
 			setUpdating(false);
 		}
 	};
+
 	return (
 		<div className="w-full max-w-5xl mx-auto p-6 py-8 rounded-xl text-white">
 			<h2 className="text-xl font-semibold mb-6 text-center">
 				My Favorite Places
 			</h2>
 
-			<br />
 			{favoritePlaces.length === 0 ? (
 				<p className="text-center text-gray-400 italic">
 					You haven't marked any favorites yet.

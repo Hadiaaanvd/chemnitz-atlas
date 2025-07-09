@@ -4,9 +4,11 @@ import PlaceList from "../components/PlacesList";
 import MapView from "../components/MapView";
 import FilterBar from "../components/FiltersBar";
 import { getDistanceInKm } from "../utils/distance";
+import api from "../utils/api";
 
 export default function MapPage() {
 	const [places, setPlaces] = useState([]);
+	const [loading, setLoading] = useState(true);
 	const [filtered, setFiltered] = useState([]);
 	const [selectedPlace, setSelectedPlace] = useState(null);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -16,10 +18,12 @@ export default function MapPage() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 👈 mobile sidebar control
 
 	useEffect(() => {
-		axios.get("http://localhost:4000/api/places").then((res) => {
-			setPlaces(res.data);
-			setFiltered(res.data);
-		});
+		api.get("/places")
+			.then((res) => {
+				setPlaces(res.data);
+				setFiltered(res.data);
+			})
+			.finally(() => setLoading(false));
 	}, []);
 
 	useEffect(() => {
@@ -105,6 +109,7 @@ export default function MapPage() {
 
 			<div className="flex flex-1 h-full max-h-[calc(100vh-150px)]">
 				<PlaceList
+					loading={loading}
 					places={filtered}
 					selectedPlace={selectedPlace}
 					onSelectPlace={setSelectedPlace}

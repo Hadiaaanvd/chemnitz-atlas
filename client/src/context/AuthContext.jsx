@@ -1,19 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const token = localStorage.getItem("token");
 
 	useEffect(() => {
+		const token = localStorage.getItem("token");
 		if (token) {
-			axios
-				.get("http://localhost:4000/api/auth/me", {
-					headers: { Authorization: `Bearer ${token}` },
-				})
+			api.get("/auth/me")
 				.then((res) => setUser(res.data))
 				.catch(() => localStorage.removeItem("token"))
 				.finally(() => setLoading(false));
@@ -24,11 +21,7 @@ export function AuthProvider({ children }) {
 
 	const login = (token) => {
 		localStorage.setItem("token", token);
-		axios
-			.get("http://localhost:4000/api/auth/me", {
-				headers: { Authorization: `Bearer ${token}` },
-			})
-			.then((res) => setUser(res.data));
+		api.get("/auth/me").then((res) => setUser(res.data));
 	};
 
 	const logout = () => {
@@ -43,13 +36,8 @@ export function AuthProvider({ children }) {
 		if (!confirmDelete) return;
 
 		try {
-			await axios.delete("http://localhost:4000/api/auth", {
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem("token")}`,
-				},
-			});
-			localStorage.removeItem("token");
-			setUser(null);
+			await api.delete("/auth");
+			logout();
 			window.location.href = "/";
 		} catch (err) {
 			console.error("Failed to delete account:", err);
@@ -62,7 +50,6 @@ export function AuthProvider({ children }) {
 				user,
 				isAuthenticated: !!user,
 				login,
-				token,
 				logout,
 				loading,
 				deleteAccount,

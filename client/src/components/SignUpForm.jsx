@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import api from "../utils/api";
 import axios from "axios";
 
 export default function SignUpForm({ onSwitchToLogin, onSuccess }) {
@@ -11,7 +12,7 @@ export default function SignUpForm({ onSwitchToLogin, onSuccess }) {
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	let debounceTimeout;
+	const debounceTimeout = useRef();
 
 	useEffect(() => {
 		if (location.trim().length < 1) {
@@ -19,8 +20,8 @@ export default function SignUpForm({ onSwitchToLogin, onSuccess }) {
 			return;
 		}
 
-		clearTimeout(debounceTimeout);
-		debounceTimeout = setTimeout(() => {
+		if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+		debounceTimeout.current = setTimeout(() => {
 			setLoading(true);
 			axios
 				.get("https://nominatim.openstreetmap.org/search", {
@@ -48,7 +49,7 @@ export default function SignUpForm({ onSwitchToLogin, onSuccess }) {
 		}
 
 		try {
-			await axios.post("http://localhost:4000/api/auth/signup", {
+			await api.post("/auth/signup", {
 				name,
 				email,
 				password,
@@ -106,9 +107,9 @@ export default function SignUpForm({ onSwitchToLogin, onSuccess }) {
 				{location.length > 1 && (
 					<ul className="absolute z-10 bg-white text-black rounded shadow w-full mt-1 max-h-48 overflow-y-auto text-sm">
 						{loading && (
-							<p className="text-xs text-gray-400 m-2">
+							<li className="text-xs text-gray-400 px-4 py-2">
 								Searching...
-							</p>
+							</li>
 						)}
 						{suggestions.map((item) => (
 							<li
@@ -125,7 +126,9 @@ export default function SignUpForm({ onSwitchToLogin, onSuccess }) {
 					</ul>
 				)}
 			</div>
+
 			{error && <p className="text-red-400 text-xs">{error}</p>}
+
 			<button
 				type="submit"
 				className="bg-blue-400 hover:bg-[#409de5] w-full py-3 rounded font-semibold cursor-pointer uppercase text-sm"
