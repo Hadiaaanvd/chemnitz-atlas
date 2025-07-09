@@ -41,11 +41,10 @@ export default function EditProfile() {
 				value={user?.location || "Not set"}
 				onSave={(val) => handleFieldUpdate("location", val)}
 			/>
-
-			<div className="pt-4 mt-10  border-t w-lg mx-auto border-white/10">
+			<div className="pt-4 mt-10 border-t max-w-md  text-right mx-auto border-white/10">
 				<button
 					onClick={deleteAccount}
-					className="w-full cursor-pointer text-right text-sm text-red-400 hover:text-red-500 underline"
+					className="cursor-pointer w-full text-right text-sm text-red-400 hover:text-red-500 underline"
 				>
 					Delete my account
 				</button>
