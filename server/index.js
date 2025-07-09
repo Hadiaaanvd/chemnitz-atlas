@@ -14,10 +14,7 @@ const app = express();
 // Middleware
 app.use(
 	cors({
-		origin: [
-			"http://localhost:5173",
-			"https://chemnitz-atlas.onrender.com/api",
-		],
+		origin: ["http://localhost:5173", "https://chemnitz-atlas.vercel.app"],
 		credentials: true,
 	})
 );
