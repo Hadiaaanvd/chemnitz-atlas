@@ -16,7 +16,7 @@ app.use(
 	cors({
 		origin: [
 			"http://localhost:5173",
-			"https://your-vercel-frontend.vercel.app",
+			"https://your-backend-service.onrender.com/api",
 		],
 		credentials: true,
 	})
