@@ -16,7 +16,7 @@ app.use(
 	cors({
 		origin: [
 			"http://localhost:5173",
-			"https://your-backend-service.onrender.com/api",
+			"https://chemnitz-atlas.onrender.com/api",
 		],
 		credentials: true,
 	})
