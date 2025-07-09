@@ -1,10 +1,10 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css";
 import { LocateUser } from "./UserLocation";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import PlaceModal from "./PlacesModal";
+import "leaflet/dist/leaflet.css";
 
 // Fix for missing default icons
 delete L.Icon.Default.prototype._getIconUrl;
