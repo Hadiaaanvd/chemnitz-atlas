@@ -53,11 +53,12 @@ export default function PlaceModal({ place: initialPlace, onClose }) {
 			}
 		}
 	}, [user, place]);
-
+	console.log(user);
 	const submitReview = async () => {
 		if (!comment || !rating || !place._id) return;
 		setSubmitting(true);
 		try {
+			console.log("Submitting review with username:", user.name);
 			const res = await api.post(`/places/${place._id}/reviews`, {
 				comment,
 				rating,
@@ -100,17 +101,11 @@ export default function PlaceModal({ place: initialPlace, onClose }) {
 		<div className="w-full max-w-xl p-4 px-6 space-y-4 bg-[#181c2f] text-white shadow-lg rounded-xl">
 			{/* Header */}
 			<div className="flex justify-between items-start">
-				<div className="flex items-center gap-2 text-lg font-semibold">
-					<span>{place.name}</span>
-					{user && (
-						<button
-							onClick={toggleFavorite}
-							title={favorite ? "Unfavorite" : "Favorite"}
-							className="text-red-500 hover:scale-110 transition cursor-pointer"
-						>
-							{favorite ? <FaHeart /> : <FaRegHeart />}
-						</button>
-					)}
+				<div
+					className="flex  items-center gap-2 text-lg  w-full font-normal
+				"
+				>
+					<span>{place.name}</span> &nbsp;
 				</div>
 				<button
 					onClick={onClose}
@@ -122,29 +117,48 @@ export default function PlaceModal({ place: initialPlace, onClose }) {
 
 			{/* Place Info */}
 			<div
-				className="bg-[#20243a] p-4 rounded-xl border-r-4"
+				className="bg-[#20243a] flex justify-between p-4 rounded-xl border-r-4"
 				style={{ borderColor: "#f87171" }}
 			>
-				<p className="text-sm text-gray-400 capitalize">
-					{place.category}
-				</p>
-				{place.address && <p className="text-sm">{place.address}</p>}
-				{place.website && (
-					<a
-						href={place.website}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-sm text-blue-400 underline"
-					>
-						Visit website
-					</a>
-				)}
-				{place.description && (
-					<p className="text-sm italic text-gray-300">
-						{place.description}
+				<div>
+					<p className="text-sm text-gray-400 capitalize">
+						{place.category}
 					</p>
+					{place.address && (
+						<p className="text-sm">{place.address}</p>
+					)}
+					{place.website && (
+						<a
+							href={place.website}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-sm text-blue-400 underline"
+						>
+							Visit website
+						</a>
+					)}
+					{place.description && (
+						<p className="text-sm italic text-gray-300">
+							{place.description}
+						</p>
+					)}
+					<div className="mt-2">{renderStars(place.rating)}</div>
+				</div>
+				{user && (
+					<button
+						onClick={toggleFavorite}
+						title={favorite ? "Unfavorite" : "Favorite"}
+						className={`flex cursor-pointer h-full mt-2 mr-2 text-xs items-center gap-2 px-3 py-1.5 border rounded-md text-sm transition-all duration-200
+			${
+				favorite
+					? "border-pink-500 text-white bg-[#f87171] hover:bg-[#f87171]-500/60"
+					: "border-gray-500 text-gray-100 hover:bg-gray-500/10"
+			}`}
+					>
+						{favorite ? <FaRegHeart /> : <FaRegHeart />}
+						<span>{favorite ? "Unfavorite" : "Favorite"}</span>
+					</button>
 				)}
-				<div className="mt-2">{renderStars(place.rating)}</div>
 			</div>
 
 			{favMessage && (

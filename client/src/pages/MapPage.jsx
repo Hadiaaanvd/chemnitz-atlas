@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import PlaceList from "../components/PlacesList";
 import MapView from "../components/MapView";
 import FilterBar from "../components/FiltersBar";
 import { getDistanceInKm } from "../utils/distance";
 import api from "../utils/api";
+import { useAuth } from "../context/AuthContext";
+import { useSearchParams } from "react-router-dom";
 
 export default function MapPage() {
 	const [places, setPlaces] = useState([]);
@@ -15,7 +16,12 @@ export default function MapPage() {
 	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [selectedDistance, setSelectedDistance] = useState("");
 	const [userLocation, setUserLocation] = useState(null);
-	const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 👈 mobile sidebar control
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+	const [showReviewedOnly, setShowReviewedOnly] = useState(false);
+	const [searchParams] = useSearchParams();
+
+	const { user } = useAuth();
 
 	useEffect(() => {
 		api.get("/places")
@@ -25,6 +31,17 @@ export default function MapPage() {
 			})
 			.finally(() => setLoading(false));
 	}, []);
+
+	useEffect(() => {
+		const reviewedParam = searchParams.get("reviewed");
+		const likedParam = searchParams.get("liked");
+		if (reviewedParam === "true") {
+			setShowReviewedOnly(true);
+		}
+		if (likedParam === "true") {
+			setShowFavoritesOnly(true);
+		}
+	}, [searchParams]);
 
 	useEffect(() => {
 		navigator.geolocation.getCurrentPosition(
@@ -58,8 +75,22 @@ export default function MapPage() {
 					userLocation.lat,
 					userLocation.lon
 				) <= Number(selectedDistance);
-			return matchesSearch && matchesCategory && matchesDistance;
+
+			const matchesFavorites =
+				!showFavoritesOnly || user?.favorites?.includes(p._id);
+			const matchesReviewed =
+				!showReviewedOnly ||
+				p.reviews?.some((r) => r.user === user?._id);
+
+			return (
+				matchesSearch &&
+				matchesCategory &&
+				matchesDistance &&
+				matchesFavorites &&
+				matchesReviewed
+			);
 		});
+
 		setFiltered(result);
 	}, [
 		searchQuery,
@@ -67,6 +98,9 @@ export default function MapPage() {
 		selectedDistance,
 		userLocation,
 		places,
+		showFavoritesOnly,
+		showReviewedOnly,
+		user,
 	]);
 
 	const handleCategoryChange = (items) => {
@@ -78,20 +112,27 @@ export default function MapPage() {
 		setSelectedCategories([]);
 		setSelectedDistance("");
 		setFiltered(places);
+		setShowFavoritesOnly(false);
+		setShowReviewedOnly(false);
 	};
 
 	return (
 		<div className="h-screen flex flex-col bg-[#1c1d33] relative">
 			<FilterBar
+				isAuthenticated={!!user}
+				hasLocation={!!userLocation}
 				selectedDistance={selectedDistance}
 				onSearchChange={(e) => setSearchQuery(e.target.value)}
 				onCategoryChange={handleCategoryChange}
 				onDistanceChange={(e) => setSelectedDistance(e.target.value)}
 				selected={selectedCategories}
 				onClearFilters={handleClearFilters}
+				showFavoritesOnly={showFavoritesOnly}
+				setShowFavoritesOnly={setShowFavoritesOnly}
+				showReviewedOnly={showReviewedOnly}
+				setShowReviewedOnly={setShowReviewedOnly}
 			/>
 
-			{/* Mobile sidebar toggle button */}
 			<button
 				onClick={() => setIsSidebarOpen(true)}
 				className="md:hidden text-white text-sm absolute bottom-[15px] left-4 z-40 bg-[#2b2e45] px-3 py-2 rounded-md shadow-lg"
@@ -99,7 +140,6 @@ export default function MapPage() {
 				☰ Categories
 			</button>
 
-			{/* Mobile backdrop */}
 			{isSidebarOpen && (
 				<div
 					onClick={() => setIsSidebarOpen(false)}

@@ -7,6 +7,7 @@ import {
 	FaPaintBrush,
 	FaHome,
 } from "react-icons/fa";
+import { categoryColors } from "../utils/colors";
 
 export default function PlaceList({
 	places,
@@ -34,15 +35,6 @@ export default function PlaceList({
 		theatre: <FaTheaterMasks />,
 		artwork: <FaPaintBrush />,
 		hotel: <FaHotel />,
-	};
-
-	const categoryColors = {
-		restaurant: "#f87171",
-		guest_house: "#6ee7b7",
-		museum: "#60a5fa",
-		theatre: "#34d399",
-		artwork: "#a78bfa",
-		hotel: "#fbbf24",
 	};
 
 	const getCategoryColor = (cat) =>
@@ -90,14 +82,14 @@ export default function PlaceList({
 					return (
 						<div
 							key={cat}
-							className="mb-6 bg-[#1e213a] rounded-xl shadow-md border-l-4"
+							className="mb-6 bg-[#1e213a] rounded-xl shadow-md border-l-4 cursor-pointer"
 							style={{ borderColor: color }}
 						>
 							<button
 								onClick={() => toggleOpen(cat)}
-								className="w-full px-4 py-4 flex justify-between items-center"
+								className="w-full px-4 py-4 flex justify-between items-center cursor-pointer"
 							>
-								<div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+								<div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide cursor-pointer">
 									<span style={{ color }}>
 										{categoryIcons[cat.toLowerCase()] ||
 											null}

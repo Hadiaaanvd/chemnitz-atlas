@@ -14,10 +14,6 @@ export default function AuthPage() {
 		setTimeout(() => setSuccessMessage(""), 4000);
 	};
 
-	const handleLogin = () => {
-		// ✅ Login success → navigate to homepage
-		navigate("/");
-	};
 	return (
 		<div className="min-h-[calc(100vh-97px)] flex items-center justify-center text-white">
 			<div className="bg-gradient-to-r from-[#2b2d4a] to-[#3d4063] p-8 rounded shadow-lg w-full max-w-lg space-y-4">

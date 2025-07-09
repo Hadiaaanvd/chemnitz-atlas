@@ -10,8 +10,6 @@ import EditGeneralInfo from "../components/EditProfile";
 import EditPassword from "../components/ChangePassword";
 import MyReviews from "../components/PersonalReviews";
 import Favorites from "../components/Favorites";
-import logo from "../assets/logo-sub.svg";
-
 const mainTabs = {
 	"Edit Profile": [
 		{ key: "Edit General Info", icon: <FaUserEdit /> },

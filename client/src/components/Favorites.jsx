@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { FaHeart, FaStar, FaRegStar } from "react-icons/fa";
+import { FaRegHeart, FaStar, FaRegStar } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-import api from "../utils/api"; // ✅ use central axios instance
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
-export default function Favorites({ onSelectPlace }) {
+export default function Favorites({}) {
+	const navigate = useNavigate();
 	const { user, updateUser } = useAuth();
 	const [places, setPlaces] = useState([]);
 	const [updating, setUpdating] = useState(false);
@@ -68,34 +70,36 @@ export default function Favorites({ onSelectPlace }) {
 					{favoritePlaces.map((place) => (
 						<div
 							key={place._id}
-							className="border p-4 rounded bg-white/5 hover:bg-white/10 transition cursor-pointer relative"
-							onClick={() => onSelectPlace?.(place)}
+							className="border rounded-xl flex items-center justify-between p-4 rounded bg-white/5 hover:bg-white/10 transition cursor-pointer relative"
+							onClick={() => navigate("/?liked=true")}
 						>
+							<div>
+								<h3 className="text-lg font-medium">
+									{place.name}
+								</h3>
+								<p className="text-sm text-gray-400">
+									{place.category}
+								</p>
+								{place.address && (
+									<p className="text-xs italic text-gray-300 mt-1">
+										{place.address}
+									</p>
+								)}
+								<div className="mt-2">
+									{renderStars(place.rating)}
+								</div>
+							</div>
 							<button
 								onClick={(e) => {
 									e.stopPropagation();
 									toggleFavorite(place._id);
 								}}
-								className="absolute top-2 right-2 text-red-500 hover:scale-110 transition"
-								title="Remove from favorites"
+								title={"Unfavorite"}
+								className="flex cursor-pointer h-8  mr-1 text-xs items-center gap-2 px-3 py-1.5 border rounded-md text-sm transition-all duration-200 border-pink-500 text-white bg-[#f87171] hover:bg-[#f87171]-500/60"
 							>
-								<FaHeart />
+								<FaRegHeart />
+								<span>Unfavorite</span>
 							</button>
-
-							<h3 className="text-lg font-medium">
-								{place.name}
-							</h3>
-							<p className="text-sm text-gray-400">
-								{place.category}
-							</p>
-							{place.address && (
-								<p className="text-xs italic text-gray-300 mt-1">
-									{place.address}
-								</p>
-							)}
-							<div className="mt-2">
-								{renderStars(place.rating)}
-							</div>
 						</div>
 					))}
 				</div>

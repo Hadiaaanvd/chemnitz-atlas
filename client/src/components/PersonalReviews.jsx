@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-import api from "../utils/api"; // ✅ Use shared Axios instance
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
-export default function MyReviews({ onSelectPlace }) {
+export default function MyReviews({}) {
+	const navigate = useNavigate();
 	const { user } = useAuth();
 	const [places, setPlaces] = useState([]);
 
@@ -50,8 +52,8 @@ export default function MyReviews({ onSelectPlace }) {
 					{reviews.slice(0, 6).map((r, i) => (
 						<div
 							key={i}
-							onClick={() => onSelectPlace?.(r.place)}
-							className="border p-4 space-y-2 rounded bg-white/5 cursor-pointer hover:bg-white/10 transition"
+							onClick={() => navigate("/?reviewed=true")}
+							className="border rounded-lg p-4 space-y-2 rounded bg-white/5 cursor-pointer hover:bg-white/10 transition"
 						>
 							<div className="flex justify-between items-center">
 								<h3 className="font-medium text-base">

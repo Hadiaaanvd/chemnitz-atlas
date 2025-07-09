@@ -5,6 +5,7 @@ import { LocateUser } from "./UserLocation";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import PlaceModal from "./PlacesModal";
 import "leaflet/dist/leaflet.css";
+import { categoryColors } from "../utils/colors";
 
 // Fix for missing default icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -37,19 +38,12 @@ const getPulsingIcon = () =>
 		className: "pulsing-icon",
 		iconSize: [30, 30],
 		iconAnchor: [14, 13],
-		html: '<div class="animate-pulse w-7 h-7 bg-blue-500 rounded-full border-4 border-blue-300"></div>',
+		html: '<div class="animate-pulse w-7 h-7 bg-blue-600 rounded-full border-4 border-blue-300"></div>',
 	});
 
 const getIconByCategory = (category, isSelected = false) => {
 	if (isSelected) return getPulsingIcon();
-	const colorMap = {
-		restaurant: "#f87171",
-		museum: "#60a5fa",
-		theatre: "#34d399",
-		artwork: "#a78bfa",
-		guest_house: "#6ee7b7",
-		hotel: "#fbbf24",
-	};
+	const colorMap = categoryColors;
 	return getColoredCircleIcon(colorMap[category?.toLowerCase()] || "#3498db");
 };
 
@@ -108,10 +102,7 @@ function PlaceMarker({ place, isSelected, onClick }) {
 						{place.address}
 					</div>
 					{place.rating && renderStars(place.rating)}
-					<button
-						className="mt-1 text-xs text-blue-600 underline cursor-pointer"
-						onClick={() => onClick(place)}
-					>
+					<button className="mt-1 text-xs text-blue-600 underline cursor-pointer">
 						See More
 					</button>
 				</div>
@@ -146,7 +137,10 @@ export default function MapView({ places, selectedPlace }) {
 						key={place._id}
 						place={place}
 						isSelected={selectedPlace?._id === place._id}
-						onClick={setModalPlace}
+						onClick={() => {
+							setModalPlace(null); // close any existing modal
+							setTimeout(() => setModalPlace(place), 0); // open new modal
+						}}
 					/>
 				))}
 
